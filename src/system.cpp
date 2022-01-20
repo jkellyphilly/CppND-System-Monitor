@@ -7,6 +7,7 @@
 #include "process.h"
 #include "processor.h"
 #include "system.h"
+#include "linux_parser.h"
 
 using std::set;
 using std::size_t;
@@ -28,8 +29,10 @@ std::string System::Kernel() { return string(); }
 // TODO: Return the system's memory utilization
 float System::MemoryUtilization() { return 0.0; }
 
-// TODO: Return the operating system name
-std::string System::OperatingSystem() { return string(); }
+// Return OS name by calling the LinuxParser method OperatingSystem()
+std::string System::OperatingSystem() { 
+    return LinuxParser::OperatingSystem(); 
+}
 
 // TODO: Return the number of processes actively running on the system
 int System::RunningProcesses() { return 0; }
