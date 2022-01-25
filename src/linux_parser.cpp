@@ -67,8 +67,44 @@ vector<int> LinuxParser::Pids() {
   return pids;
 }
 
-// TODO: Read and return the system memory utilization
-float LinuxParser::MemoryUtilization() { return 0.0; }
+// Read and return the system memory utilization
+// Formula used is MemUsed = MemTotal - MemFree
+float LinuxParser::MemoryUtilization() { 
+  float utilization;
+  string line;
+  string key;
+  string value;
+  float mem_total = -1.0;
+  float mem_free = -1.0;
+  std::ifstream filestream(kProcDirectory + kMeminfoFilename);
+
+  if (filestream.is_open()) {
+    while (std::getline(filestream, line)) {
+      // remove the colon and tabs from the string
+      line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
+      line.erase(std::remove(line.begin(), line.end(), '\t'), line.end());
+
+      std::istringstream linestream(line);
+      while (linestream >> key >> value) {
+        if (key == "MemTotal") {
+          std::stringstream val(value);
+          val >> mem_total;
+        } else if (key == "MemFree") {
+          std::stringstream val(value);
+          val >> mem_free;
+        }
+
+        // if we've got both MemTotal and MemFree initiated (which means
+        // we've updated from -1.0), then calculate
+        if (mem_total != -1.0 && mem_free != -1.0) {
+          utilization = mem_total - mem_free;
+          return (utilization / mem_total);
+        }
+      }
+    } 
+  }
+  return 0.0;
+}
 
 // TODO: Read and return the system uptime
 long LinuxParser::UpTime() { return 0; }
