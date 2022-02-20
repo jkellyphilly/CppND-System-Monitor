@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "linux_parser.h"
 
@@ -11,7 +12,7 @@ using std::string;
 using std::to_string;
 using std::vector;
 
-// Parse the OS for the system (PRETTY_NAME format)
+// An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
   string line;
   string key;
@@ -80,7 +81,6 @@ float LinuxParser::MemoryUtilization() {
 
   if (filestream.is_open()) {
     while (std::getline(filestream, line)) {
-      // remove the colon and tabs from the string
       line.erase(std::remove(line.begin(), line.end(), ':'), line.end());
       line.erase(std::remove(line.begin(), line.end(), '\t'), line.end());
 
@@ -94,8 +94,6 @@ float LinuxParser::MemoryUtilization() {
           val >> mem_free;
         }
 
-        // if we've got both MemTotal and MemFree initiated (which means
-        // we've updated from -1.0), then calculate
         if (mem_total != -1.0 && mem_free != -1.0) {
           utilization = mem_total - mem_free;
           return (utilization / mem_total);
@@ -123,20 +121,37 @@ long LinuxParser::UpTime() {
   return 0; 
 }
 
-// TODO: Read and return the number of jiffies for the system
-long LinuxParser::Jiffies() { return 0; }
+// Read and return the number of jiffies for the system
+long LinuxParser::Jiffies() { 
+  vector<string> cpu_util_vals = LinuxParser::CpuUtilization();
+  long sum;
+  for (string s : cpu_util_vals) {
+    sum += std::stol(s);
+  }
+
+  return sum;
+}
 
 // TODO: Read and return the number of active jiffies for a PID
 // REMOVE: [[maybe_unused]] once you define the function
 long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
 
-// TODO: Read and return the number of active jiffies for the system
-long LinuxParser::ActiveJiffies() { return 0; }
+// Read and return the number of active jiffies for the system
+long LinuxParser::ActiveJiffies() { 
+  vector<string> total_jiffies = LinuxParser::CpuUtilization();
+  long active_jiffies = std::stol(total_jiffies[0]) + std::stol(total_jiffies[1]) + std::stol(total_jiffies[2]) + std::stol(total_jiffies[5]) + std::stol(total_jiffies[6]) + std::stol(total_jiffies[7]);
+  return active_jiffies;
+}
 
-// TODO: Read and return the number of idle jiffies for the system
-long LinuxParser::IdleJiffies() { return 0; }
+// Read and return the number of idle jiffies for the system
+long LinuxParser::IdleJiffies() { 
+  vector<string> total_jiffies = LinuxParser::CpuUtilization();
+  // Only include idle and iowait!
+  long idle_jiffies = std::stol(total_jiffies[3]) + std::stol(total_jiffies[4]);
+  return idle_jiffies;
+}
 
-// Read and return CPU utilization
+// Read and return CPU utilization values
 vector<string> LinuxParser::CpuUtilization() { 
   string line;
   string key;
@@ -176,16 +191,17 @@ int LinuxParser::TotalProcesses() {
       }
     }
   }
+  return 0;
 }
 
-// TODO: can I keep my code DRY-er by combining with the TotalProcesses() up above?
+// TODO: consolidate this with TotalProcesses() above
 // Read and return the number of running processes
 int LinuxParser::RunningProcesses() { 
   string line;
   string key;
   string value;
-  int running_procs;
-  std::ifstream filestream(kProcDirectory + kStatFilename);
+  int running_processes;
+  std::ifstream filestream(kProcDirectory + kStatFilename); 
 
   if (filestream.is_open()) {
     while (std::getline(filestream, line)) {
@@ -193,12 +209,13 @@ int LinuxParser::RunningProcesses() {
       while (linestream >> key >> value) {
         if (key == "procs_running") {
           std::stringstream val(value);
-          val >> running_procs;
-          return running_procs;
+          val >> running_processes;
+          return running_processes;
         }
       }
     }
   }
+  return 0;
 }
 
 // TODO: Read and return the command associated with a process
