@@ -13,17 +13,22 @@ using std::set;
 using std::size_t;
 using std::string;
 using std::vector;
-/*You need to complete the mentioned TODOs in order to satisfy the rubric criteria "The student will be able to extract and display basic data about the system."
-
-You need to properly format the uptime. Refer to the comments mentioned in format. cpp for formatting the uptime.*/
 
 // TODO: Return the system's CPU
 Processor& System::Cpu() { return cpu_; }
 
-// TODO: Return a container composed of the system's processes
-vector<Process>& System::Processes() { return processes_; }
+// Return a container composed of the system's processes
+vector<Process>& System::Processes() { 
+    vector<int> pids = LinuxParser::Pids();
+    for (int i : pids) {
+        Process* proc = new Process(i);
+        processes_.push_back(*proc);
+    }
+    return processes_; 
+}
 
-// Return the system's kernel identifier (string)
+// Return the system's kernel identifier (string) by calling
+// the LinuxParser method
 std::string System::Kernel() { 
     return LinuxParser::Kernel(); 
 }
@@ -33,14 +38,14 @@ float System::MemoryUtilization() {
     return LinuxParser::MemoryUtilization(); 
 }
 
-// Return OS name by calling the LinuxParser method OperatingSystem()
+// Return OS name by calling LinuxParser method
 std::string System::OperatingSystem() { 
-    return LinuxParser::OperatingSystem(); 
+    return LinuxParser::OperatingSystem();
 }
 
 // Return the number of processes actively running on the system
 int System::RunningProcesses() { 
-    return LinuxParser::RunningProcesses();
+    return LinuxParser::RunningProcesses(); 
 }
 
 // Return the total number of processes on the system
