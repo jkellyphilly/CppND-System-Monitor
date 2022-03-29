@@ -132,10 +132,6 @@ long LinuxParser::Jiffies() {
   return sum;
 }
 
-// TODO: Read and return the number of active jiffies for a PID
-// REMOVE: [[maybe_unused]] once you define the function
-long LinuxParser::ActiveJiffies(int pid[[maybe_unused]]) { return 0; }
-
 // Read and return the number of active jiffies for the system
 long LinuxParser::ActiveJiffies() { 
   vector<string> total_jiffies = LinuxParser::CpuUtilization();
