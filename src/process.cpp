@@ -3,6 +3,7 @@
 #include <sstream>
 #include <string>
 #include <vector>
+#include <iostream>
 
 #include "process.h"
 #include "linux_parser.h"
@@ -41,8 +42,15 @@ string Process::Command() {
 // formatting purposes.
 string Process::Ram() { 
     string ram_kb = LinuxParser::Ram(Process::Pid()); 
-    float ram_kb_float = std::stof(ram_kb);
-    float ram_mb_float = ram_kb_float/1000;
+    if (ram_kb.empty()) {
+        throw std::runtime_error(std::string("Empty return for ram usage."));
+    }
+    float ram_mb_float;
+    try {
+        ram_mb_float = std::stof(ram_kb)/1000;
+    } catch (...) {
+        throw std::runtime_error(ram_kb);
+    }
     return std::to_string(ram_mb_float).substr(0, 7);
 }
 
