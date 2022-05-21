@@ -42,14 +42,17 @@ string Process::Command() {
 // formatting purposes.
 string Process::Ram() { 
     string ram_kb = LinuxParser::Ram(Process::Pid()); 
-    if (ram_kb.empty()) {
-        throw std::runtime_error(std::string("Empty return for ram usage."));
-    }
+    // if (ram_kb.empty()) {
+    //     throw std::runtime_error(std::string("Empty return for ram usage for Pid: ") + std::to_string(Process::Pid()));
+    // }
     float ram_mb_float;
     try {
         ram_mb_float = std::stof(ram_kb)/1000;
     } catch (...) {
-        throw std::runtime_error(ram_kb);
+        // There was an error converting the string to a float - default to zero 
+        // (most likely the ram_kb is an empty string - I tested this out in the 
+        // commented-out code up above)
+        ram_mb_float = 0;
     }
     return std::to_string(ram_mb_float).substr(0, 7);
 }
