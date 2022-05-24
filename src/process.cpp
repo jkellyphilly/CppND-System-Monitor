@@ -8,9 +8,6 @@
 #include "process.h"
 #include "linux_parser.h"
 
-using std::string;
-using std::to_string;
-using std::vector;
 using namespace std;
 
 // Return this process's ID
@@ -60,7 +57,7 @@ string Process::Ram() {
         // commented-out code up above)
         ram_mb_float = 0;
     }
-    return std::to_string(ram_mb_float).substr(0, 7);
+    return to_string(ram_mb_float).substr(0, 7);
 }
 
 // Return the user (name) that generated this process
@@ -77,5 +74,5 @@ long int Process::UpTime() {
 bool Process::operator<(Process const& a) const { 
     string this_ram_kb = LinuxParser::Ram(pid_);
     string a_ram_kb = LinuxParser::Ram(a.pid_);
-    return std::stof(this_ram_kb) < std::stof(a_ram_kb); 
+    return stof(this_ram_kb) < stof(a_ram_kb); 
 }
