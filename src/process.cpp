@@ -11,6 +11,7 @@
 using std::string;
 using std::to_string;
 using std::vector;
+using namespace std;
 
 // Return this process's ID
 int Process::Pid() { return pid_; }
@@ -34,7 +35,12 @@ float Process::CpuUtilization() {
 
 // Return the command that generated this process
 string Process::Command() { 
-    return LinuxParser::Command(Process::Pid());
+    string cmd = LinuxParser::Command(Process::Pid());
+    if (cmd.length() > 40) {
+        cmd = cmd.substr(0, 37) + string("...");
+    }
+
+    return cmd;
 }
 
 // Return this process's memory utilization.
