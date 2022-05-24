@@ -9,10 +9,7 @@
 #include "system.h"
 #include "linux_parser.h"
 
-using std::set;
-using std::size_t;
-using std::string;
-using std::vector;
+using namespace std;
 
 // Return the system's CPU
 Processor& System::Cpu() { return cpu_; }
@@ -29,7 +26,7 @@ vector<Process>& System::Processes() {
 
 // Return the system's kernel identifier (string) by calling
 // the LinuxParser method
-std::string System::Kernel() { 
+string System::Kernel() { 
     return LinuxParser::Kernel(); 
 }
 
@@ -39,7 +36,7 @@ float System::MemoryUtilization() {
 }
 
 // Return OS name by calling LinuxParser method
-std::string System::OperatingSystem() { 
+string System::OperatingSystem() { 
     return LinuxParser::OperatingSystem();
 }
 
