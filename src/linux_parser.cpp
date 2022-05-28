@@ -86,10 +86,10 @@ float LinuxParser::MemoryUtilization() {
 
       std::istringstream linestream(line);
       while (linestream >> key >> value) {
-        if (key == "MemTotal") {
+        if (key == filterMemTotalString) {
           std::stringstream val(value);
           val >> mem_total;
-        } else if (key == "MemFree") {
+        } else if (key == filterMemFreeString) {
           std::stringstream val(value);
           val >> mem_free;
         }
@@ -159,7 +159,7 @@ vector<string> LinuxParser::CpuUtilization() {
     while (std::getline(filestream, line)) {
       std::istringstream linestream(line);
       while (linestream >> key >> val1 >> val2 >> val3 >> val4 >> val5 >> val6 >> val7 >> val8 >> val9 >> val10) {
-        if (key == "cpu") {
+        if (key == filterCpu) {
           return {val1, val2, val3, val4, val5, val6, val7, val8, val9, val10};
         }
       }
@@ -179,7 +179,7 @@ int LinuxParser::TotalProcesses() {
     while (std::getline(filestream, line)) {
       std::istringstream linestream(line);
       while (linestream >> key >> value) {
-        if (key == "processes") {
+        if (key == filterProcesses) {
           std::stringstream val(value);
           val >> total_processes;
           return total_processes;
@@ -202,7 +202,7 @@ int LinuxParser::RunningProcesses() {
     while (std::getline(filestream, line)) {
       std::istringstream linestream(line);
       while (linestream >> key >> value) {
-        if (key == "procs_running") {
+        if (key == filterRunningProcesses) {
           std::stringstream val(value);
           val >> running_processes;
           return running_processes;
@@ -235,7 +235,7 @@ string LinuxParser::Ram(int pid) {
     while (std::getline(filestream, line)) {
       std::istringstream linestream(line);
       while (linestream >> key >> value) {
-        if (key == "VmSize:") {
+        if (key == filterProcMem) {
           return value;
         }
       }
@@ -254,7 +254,7 @@ string LinuxParser::Uid(int pid) {
     while (std::getline(filestream, line)) {
       std::istringstream linestream(line);
       while (linestream >> key >> value) {
-        if (key == "Uid:") {
+        if (key == filterUID) {
           return value;
         }
       }
