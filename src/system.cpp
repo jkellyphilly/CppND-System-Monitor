@@ -16,10 +16,15 @@ Processor& System::Cpu() { return cpu_; }
 
 // Return a container composed of the system's processes
 vector<Process>& System::Processes() { 
-    vector<int> pids = LinuxParser::Pids();
-    for (int i : pids) {
-        Process* proc = new Process(i);
-        processes_.push_back(*proc);
+    const vector<int> & pids = LinuxParser::Pids();
+    for (const int pid : pids) {
+        // I can just push back an int. This calls the constructor 
+        // for the Process class with an int (pid) and returns
+        // a process object. Cool!
+        // It works because my processes_ vector is defined as 
+        // having the type of Process for item in it. So when we push
+        // new into the vector, Process constructor is called. Woah.
+        processes_.push_back(pid);
     }
     return processes_; 
 }
