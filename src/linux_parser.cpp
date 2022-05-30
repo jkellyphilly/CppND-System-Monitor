@@ -12,6 +12,28 @@ using std::string;
 using std::to_string;
 using std::vector;
 
+// HELPER FUNCTIONS
+
+template <typename T>
+T findValueByKey(std::string const &keyFilter, std::string const &filename) {
+  string line, key;
+  T value;
+
+  std::ifstream stream(filename);
+  if (stream.is_open()) {
+    while (std::getline(stream, line)) {
+      std::istringstream linestream(line);
+      while (linestream >> key >> value) {
+        if (key == keyFilter) {
+          return value;
+        }
+      }
+    }
+  }
+  stream.close();
+  return value;
+}
+
 // An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
   string line;
@@ -235,22 +257,7 @@ string LinuxParser::Command(int pid) {
 
 // Read and return the memory used by a process
 string LinuxParser::Ram(int pid) { 
-  string line;
-  string key;
-  string value;
-  std::ifstream filestream(kProcDirectory + std::to_string(pid) + kStatusFilename);
-  if (filestream.is_open()) {
-    while (std::getline(filestream, line)) {
-      std::istringstream linestream(line);
-      while (linestream >> key >> value) {
-        if (key == filterProcMem) {
-          return value;
-        }
-      }
-    }
-  }
-  filestream.close();
-  return string(); 
+  return findValueByKey<string>(filterProcMem, (kProcDirectory + to_string(pid) + kStatusFilename));
 }
 
 // Read and return the user ID associated with a process
