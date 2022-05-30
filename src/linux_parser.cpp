@@ -262,22 +262,7 @@ string LinuxParser::Ram(int pid) {
 
 // Read and return the user ID associated with a process
 string LinuxParser::Uid(int pid) { 
-  string line;
-  string key;
-  string value;
-  std::ifstream filestream(kProcDirectory + std::to_string(pid) + kStatusFilename);
-  if (filestream.is_open()) {
-    while (std::getline(filestream, line)) {
-      std::istringstream linestream(line);
-      while (linestream >> key >> value) {
-        if (key == filterUID) {
-          return value;
-        }
-      }
-    }
-  }
-  filestream.close();
-  return string(); 
+  return findValueByKey<string>(filterUID, (kProcDirectory + to_string(pid) + kStatusFilename));
 }
 
 // Read and return the user associated with a process
