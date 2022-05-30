@@ -34,6 +34,20 @@ T findValueByKey(std::string const &keyFilter, std::string const &filename) {
   return value;
 }
 
+template <typename T>
+T getValueOfFile(std::string const &filename) {
+  std::string line;
+  T value;
+
+  std::ifstream stream(filename);
+  if (stream.is_open()) {
+    std::getline(stream, line);
+    std::istringstream linestream(line);
+    linestream >> value;
+  }
+  return value;
+};
+
 // An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
   string line;
@@ -196,26 +210,7 @@ vector<string> LinuxParser::CpuUtilization() {
 
 // Read and return the total number of processes
 int LinuxParser::TotalProcesses() { 
-  string line;
-  string key;
-  string value;
-  int total_processes;
-  std::ifstream filestream(kProcDirectory + kStatFilename);
-
-  if (filestream.is_open()) {
-    while (std::getline(filestream, line)) {
-      std::istringstream linestream(line);
-      while (linestream >> key >> value) {
-        if (key == filterProcesses) {
-          std::stringstream val(value);
-          val >> total_processes;
-          return total_processes;
-        }
-      }
-    }
-  }
-  filestream.close();
-  return 0;
+  return findValueByKey<int>(filterProcesses, (kProcDirectory + kStatFilename));
 }
 
 // Read and return the number of running processes
