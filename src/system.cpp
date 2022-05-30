@@ -18,13 +18,16 @@ Processor& System::Cpu() { return cpu_; }
 vector<Process>& System::Processes() { 
     const vector<int> & pids = LinuxParser::Pids();
     for (const int pid : pids) {
-        // I can just push back an int. This calls the constructor 
-        // for the Process class with an int (pid) and returns
-        // a process object. Cool!
-        // It works because my processes_ vector is defined as 
-        // having the type of Process for item in it. So when we push
-        // new into the vector, Process constructor is called. Woah.
-        processes_.push_back(pid);
+        Process* proc = new Process(pid);
+        // Only push back a process if it has a CMD, user, and 
+        // RAM associated with it, as well as a non-zero CPU 
+        // utilization. 
+        if (!(*proc).Command().empty() 
+            && !(*proc).User().empty()
+            && !(*proc).Ram().empty()
+            && ((*proc).CpuUtilization() != 0.0)) {
+            processes_.push_back(*proc);
+        }
     }
     return processes_; 
 }
