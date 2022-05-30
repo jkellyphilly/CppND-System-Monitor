@@ -62,7 +62,11 @@ string Process::Ram() {
 
 // Return the user (name) that generated this process
 string Process::User() { 
-    return LinuxParser::User(Process::Pid()); 
+    string user = LinuxParser::User(Process::Pid());
+    if (user.length() > 10) {
+        user = user.substr(0, 7) + string("...");
+    }
+    return user;
 }
 
 // Return the age of this process (in seconds)
