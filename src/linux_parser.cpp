@@ -165,6 +165,7 @@ vector<string> LinuxParser::CpuUtilization() {
       }
     }
   } 
+  return cpu_util_vals;
 }
 
 // Read and return the total number of processes
@@ -296,18 +297,19 @@ string LinuxParser::User(int pid) {
       }
     }
   }
+  return string();
 }
 
 vector<long> LinuxParser::StatValues(int pid) {
   string line;
   string value;
+  vector<long> values = {};
 
   std::ifstream filestream(kProcDirectory + std::to_string(pid) + kStatFilename);
   if (filestream.is_open()) {
     std::getline(filestream, line);
     size_t start = 0;
     size_t end = line.find(' ', start);
-    vector<long> values = {};
     while (end != std::string::npos || end < 23) {
       value = line.substr(start, end);
       long val;
@@ -324,9 +326,8 @@ vector<long> LinuxParser::StatValues(int pid) {
       start = end + 1; // 1 to account for the space itself
       end = line.find(' ', start);
     }
-
-    return values;
   }
+  return values;
 }
 
 // Read and return the uptime of a process
